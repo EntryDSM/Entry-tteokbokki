@@ -1,6 +1,6 @@
 import { React } from "react";
 import styled from "@emotion/styled";
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext, useNavigate } from "react-router-dom";
 import { color } from "@entry/design-token";
 import { UserType } from "@entry/types";
 import { ImgStore } from "../components/common/ImgStore";
@@ -46,10 +46,11 @@ export const Main = () => {
 };
 
 const WriteButton = ({ userType }: UserType) => {
+  const navigate = useNavigate();
   if (userType !== "admin") return null;
 
   return (
-    <WriteButtonField>
+    <WriteButtonField onClick={() => navigate("/create-support")}>
       <IconStore name="Write" width="20px" height="20px" />글 작성하기
     </WriteButtonField>
   );

@@ -2,7 +2,7 @@
 import { css } from "@emotion/react";
 import { useState, useEffect } from "react";
 import { color, font } from "@entry/design-token";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { HeaderTypes } from "@entry/types";
 import { useModal } from "@entry/hooks";
 import { ImgStore } from "./ImgStore";
@@ -49,7 +49,7 @@ const styleUtils = {
       justifyContent: "space-between",
       position: "fixed",
       top: "0",
-      zIndex: "100",
+      zIndex: "10",
       backgroundColor: isScroll ? "rgba(255, 255, 255, 0.9)" : "none",
       transition: "background-color 0.3s ease",
     }),
@@ -65,7 +65,6 @@ const styleUtils = {
       userSelect: "none",
     }),
     jobStatu: css({
-      color: isActive ? color.green[500] : color.gray[900],
       cursor: "pointer",
       "&:hover": {
         color: color.green[500],
@@ -97,6 +96,7 @@ const styleUtils = {
 
 export const Header = ({ userType, isLogin }: HeaderTypes) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isActive, setIsActive] = useState<boolean>(false);
   const [isScroll, setIsScroll] = useState<boolean>(false);
   const style = styleUtils.header(userType, isActive, isScroll);
@@ -141,8 +141,12 @@ export const Header = ({ userType, isLogin }: HeaderTypes) => {
         {userType === "admin" && (
           <div css={style.jobStatu} onClick={handleJobStatusIsClick}>
             <div
+              onClick={() => navigate("/job-status")}
               css={css`
                 font-weight: bold;
+                color: ${location.pathname === "/job-status"
+                  ? color.green[500]
+                  : color.gray[900]};
               `}
             >
               채용 확인

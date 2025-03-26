@@ -1,23 +1,52 @@
-import { React, useState } from "react";
+import { React, useState, useRef, useEffect } from "react";
 import styled from "@emotion/styled";
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext, useNavigate } from "react-router-dom";
 import { color } from "@entry/design-token";
 import { IconStore } from "@entry/ui";
 import { UserType } from "@entry/types";
-import { useModal } from "@entry/hooks";
 
-export const CarrerItem = () => {
+export const CarrerItem = ({ id }: { id: string }) => {
   const { userType } = useOutletContext<{ userType: UserType }>();
+  const navigate = useNavigate();
   const [showDelete, setShowDelete] = useState<boolean>(false);
-  const { closeModal } = useModal();
+  const dropMenuRef = useRef<HTMLDivElement | null>(null);
 
   const handleKebabClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     setShowDelete(!showDelete);
   };
 
+  const moveToDetailPost = () => {
+    navigate(`/post/${id}`);
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    setShowDelete(false);
+    console.log(`게시글 ${id} 삭제`); // 삭제 api 호출해버려
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropMenuRef.current &&
+        !dropMenuRef.current.contains(event.target as Node)
+      ) {
+        setShowDelete(false);
+      }
+    };
+
+    if (showDelete) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showDelete]);
+
   return (
-    <CarrerItemContainer>
+    <CarrerItemContainer onClick={moveToDetailPost}>
       <Top>
         <ListItemContent>과자 배달부 모집 ( 비정규직 )</ListItemContent>
         <ImportantList>
@@ -25,13 +54,13 @@ export const CarrerItem = () => {
           <Important>중요</Important>
         </ImportantList>
         {userType === "admin" && (
-          <KebabContainer>
+          <KebabContainer ref={dropMenuRef}>
             <KebabMenu onClick={handleKebabClick}>
               <IconStore name="KebabMenu" width="25px" height="25px" />
             </KebabMenu>
             {showDelete && (
               <DropMenu>
-                <DropDelete>삭제</DropDelete>
+                <DropDelete onClick={handleDeleteClick}>삭제</DropDelete>
               </DropMenu>
             )}
           </KebabContainer>
@@ -170,5 +199,3 @@ const CarrerItemContainer = styled.div`
     transform: translateY(-2px);
   }
 `;
-
-export default CarrerItem;

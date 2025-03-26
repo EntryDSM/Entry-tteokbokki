@@ -6,3 +6,5 @@ export * from "./ApplicationWriting";
 export * from "./CreateSupport";
 export * from "./EditSupport";
 export * from "./Edited";
+export * from "./applicationStatus";
+export * from "./ApplicantDashboard";
