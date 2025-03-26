@@ -2,7 +2,7 @@ import { CheckContents, Title, KeyWord } from "../components";
 import { Inputs, Label, Button, InputTextArea, SubBtn } from "@entry/ui";
 import { useRef, useState, React, useEffect } from "react";
 import styled from "@emotion/styled";
-import { useNavigate } from "react-router-dom";
+import { apiEditSupport } from "../apis";
 
 export const EditSupport = () => {
   const fileRef = useRef();
@@ -32,10 +32,22 @@ export const EditSupport = () => {
     checkbox: { focused: isFocused, important: isImportant },
   });
 
-  const navigate = useNavigate();
+  const apiSubmit = apiEditSupport();
 
   const editClick = () => {
-    navigate("/edited");
+    apiSubmit.mutate({
+      title: datas.title,
+      keyWord: datas.keyword,
+      titleImageUrl: datas.imgUrl,
+      description: [
+        {
+          title: datas.areaInput.valueInput,
+          content: datas.areaInput.valueArea,
+        },
+      ],
+      isFocusRecruit: datas.checkbox.focused,
+      isImportant: datas.checkbox.important,
+    });
   };
 
   const imgBtnClick = () => {

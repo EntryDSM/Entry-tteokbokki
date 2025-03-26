@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import { color } from "@entry/design-token";
 import github from "../../assets/login/github.svg";
 import Modal from "react-modal";
+import { apiGithubLogin } from "../../apis";
 
 Modal.setAppElement("#root");
 Modal.defaultStyles.overlay = {};
@@ -13,10 +14,15 @@ type ModalProps = {
 };
 
 export const LoginModal = ({ isOpen, onClose }: ModalProps) => {
+  const gitLogin = apiGithubLogin();
+
+  const loginClick = async () => { 
+    gitLogin.mutate();
+  };
   return (
     <Modal style={ModalStyle} isOpen={isOpen} onRequestClose={onClose}>
       <TitleContainer>로그인</TitleContainer>
-      <GithubButton>
+      <GithubButton onClick={loginClick}>
         <img src={github} />
         github로 로그인하기
       </GithubButton>
