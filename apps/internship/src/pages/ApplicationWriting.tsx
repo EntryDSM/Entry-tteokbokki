@@ -2,53 +2,158 @@ import { Title, CheckContents } from "../components";
 import styled from "@emotion/styled";
 import { Inputs, TextAreas, Radios, SubBtn } from "@entry/ui";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { randomUUID } from "crypto";
+import { apiApplicationWriting } from "../apis";
+import { useMutation } from "@tanstack/react-query";
 
 export const ApplicationWriting = () => {
   const navigate = useNavigate();
+  const [isCheck, setIsCheck] = useState<boolean>(false);
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    label: string,
+  ) => {
+    const value = e.target.value;
+    setdatas((prev) => ({
+      ...prev,
+      inputDatas: prev.inputDatas.map((data) =>
+        data.label === label ? { ...data, value } : data,
+      ),
+    }));
+  };
 
-  const inputDatas = [
-    { label: "이름" },
-    { label: "학번" },
-    { label: "전화번호" },
-  ];
+  const handleAreaChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>,
+    label: string,
+  ) => {
+    const value = e.target.value;
+    setdatas((prev) => ({
+      ...prev,
+      areaDatas: prev.areaDatas.map((data) =>
+        data.label === label ? { ...data, value } : data,
+      ),
+    }));
+  };
 
-  const radioDatas = [
-    {
-      label: "프로그래밍 경력",
-      datas: [
-        { label: "매우 잘함" },
-        { label: "잘함" },
-        { label: "보통" },
-        { label: "못함" },
-        { label: "매우못함" },
-      ],
-    },
-    {
-      label: "전공",
-      datas: [
-        { label: "Frontend" },
-        { label: "Backend" },
-        { label: "DevOps" },
-        { label: "Design" },
-      ],
-    },
-  ];
+  const noticeId = crypto.randomUUID();
 
-  const textAreaDatas = [{ label: "지원동기" }, { label: "자기소개" }];
+  const [datas, setdatas] = useState<{
+    noticeId: number | string;
+    inputDatas: [
+      { label: string; value: string },
+      { label: string; value: string; datas: [{ label: string }] },
+      { label: string; value: string },
+    ];
+    radioDatas: [
+      {
+        label: string;
+        value: string;
+        datas: [{ label: string; name: string }];
+      },
+      {
+        label: string;
+        value: string;
+        datas: [{ label: string; name: string }];
+      },
+      {
+        label: string;
+        value: string;
+        datas: [{ label: string; name: string }];
+      },
+    ];
+    areaDatas: [
+      { label: string; value: string },
+      { label: string; value: string; datas: [{ label: string }] },
+      { label: string; value: string },
+    ];
+  }>({
+    noticeId: noticeId,
+    inputDatas: [
+      { label: "이름", value: "" },
+      { label: "학번", value: "" },
+      { label: "전화번호", value: "" },
+    ],
+    radioDatas: [
+      {
+        label: "프로그래밍 경력",
+        value: "",
+        datas: [
+          { label: "매우 잘함", name: "VERY_GOOD" },
+          { label: "잘함", name: "GOOD" },
+          { label: "보통", name: "AVERAGE" },
+          { label: "못함", name: "POOR" },
+          { label: "매우못함", name: "VERY_POOR" },
+        ],
+      },
+      {
+        label: "전공",
+        value: "",
+        datas: [
+          { label: "Frontend", name: "FRONTEND" },
+          { label: "Backend", name: "BACKEND" },
+          { label: "DevOps", name: "DEVOPS" },
+          { label: "Design", name: "DESIGN" },
+        ],
+      },
+    ],
+    areaDatas: [
+      { label: "지원동기", value: "" },
+      { label: "자기소개", value: "" },
+    ],
+  });
+
+  const handleRadioChange = (label: string, selectedValue: string) => {
+    setdatas((prev) => ({
+      ...prev,
+      radioDatas: prev.radioDatas.map((radio) =>
+        radio.label === label
+          ? {
+              ...radio,
+              value:
+                radio.datas.find((data) => data.label === selectedValue)
+                  ?.name || "",
+            }
+          : radio,
+      ),
+    }));
+  };
+
+  const apiSubmit = apiApplicationWriting();
 
   const submitClick = () => {
-    navigate("/user/submitted");
+    console.log("api 클릭");
+    apiSubmit.mutate({
+      noticeId: datas.noticeId,
+      applicationName: datas.inputDatas[0].value,
+      studentId: datas.inputDatas[1].value,
+      phoneNumber: datas.inputDatas[2].value,
+      programmingExperience: datas.radioDatas[0].value,
+      major: datas.radioDatas[1].value,
+      motivation: datas.areaDatas[0].value,
+      selfIntroduction: datas.areaDatas[1].value,
+    });
+    console.log("api 보냄");
   };
+
+  console.log(datas);
 
   return (
     <WritingContainer>
       <MainContainer>
         <Title mainTitle="지원서 작성하기" />
         <InputContainer>
-          {inputDatas.map((data) => {
-            return <Inputs isWrite={false} label={data.label} />;
+          {datas.inputDatas.map((data) => {
+            return (
+              <Inputs
+                isWrite={false}
+                label={data.label}
+                value={data.value}
+                onChange={(e) => handleInputChange(e, data.label)}
+              />
+            );
           })}
-          {radioDatas.map((data) => {
+          {datas.radioDatas.map((data) => {
             return (
               <Radios
                 label={data.label}
@@ -56,15 +161,29 @@ export const ApplicationWriting = () => {
                 userType={"user"}
                 name={data.label}
                 datas={data.datas}
+                onRadioChange={(selectedValue) =>
+                  handleRadioChange(data.label, selectedValue)
+                }
               />
             );
           })}
-          {textAreaDatas.map((data) => {
-            return <TextAreas isWrite={false} label={data.label} />;
+          {datas.areaDatas.map((data) => {
+            return (
+              <TextAreas
+                isWrite={false}
+                label={data.label}
+                value={data.value}
+                onChange={(e) => handleAreaChange(e, data.label)}
+              />
+            );
           })}
         </InputContainer>
         <SubContainer>
-          <CheckContents label="(필수) 저는 개인정보 수집 및 이용에 동의합니다." />
+          <CheckContents
+            label="(필수) 저는 개인정보 수집 및 이용에 동의합니다."
+            setIsCheck={setIsCheck}
+            isCheck={isCheck}
+          />
           <SubBtn userType="user" onClick={submitClick}>
             제출하기
           </SubBtn>

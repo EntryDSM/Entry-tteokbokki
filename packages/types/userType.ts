@@ -16,6 +16,8 @@ export const ROUTE_USER_TYPES = {
   "/edit-support": "admin",
   "/application-writing": "user",
   "/completed": "admin",
+  " user/submitted": "user",
+  "/edit-support/:noticeId": "admin",
 } as const;
 
 export const DEFAULT_USER_TYPE = "admin";

@@ -2791,6 +2791,7 @@ __metadata:
     react-dom: "npm:^18.2.0"
     react-modal: "npm:^3.16.3"
     react-router-dom: "npm:^6.21.1"
+    react-uuid: "npm:^2.0.0"
     typescript: "npm:^5.3.3"
     vite: "npm:^6.0.6"
   languageName: unknown
@@ -3840,6 +3841,13 @@ __metadata:
   peerDependencies:
     react: ">=16.8"
   checksum: 10c0/699da89e4629f227be803f5f06d3ace5522fca3035416b588380fea5f85ed7efb9155d041fb7b813305ca7fedebeb45f585696edb13cf4166fbb40fb18c77a93
+  languageName: node
+  linkType: hard
+
+"react-uuid@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "react-uuid@npm:2.0.0"
+  checksum: 10c0/91f35c83911a2072f181eee0092b45f9ea3590d22268cf8418721756d53205dd9029a873b36a00913807651a0ea5548cc0fc60bad8c4f09bcd7cb03e6ae39ecf
   languageName: node
   linkType: hard
 
