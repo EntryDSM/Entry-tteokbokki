@@ -15,6 +15,7 @@ type RadioType = {
   datas?: object[];
   setAddRadio?: React.Dispatch<React.SetStateAction<RadioItemType[]>>;
   addRadio?: object[];
+  onRadioChange?: () => void;
 };
 
 type RadioItemType = {
@@ -33,7 +34,8 @@ const RadioItem = ({
   radioLabel,
   name,
   onChange,
-}: RadioItemType) => {
+  onRadioChange,
+}: RadioItemType & { onRadioChange?: (selectedValue: string) => void }) => {
   return (
     <RadioItemContainer>
       <RadioFakeContainer>
@@ -41,7 +43,7 @@ const RadioItem = ({
           type="radio"
           userType={userType}
           name={name}
-          onChange={() => onChange?.(radioLabel || "")}
+          onChange={() => onRadioChange?.(radioLabel || "")}
         />
         <ImgContainer>
           <Check />
@@ -68,6 +70,7 @@ export const Radios = ({
   setAddRadio,
   addRadio = [],
   datas = [],
+  onRadioChange,
 }: RadioType) => {
   const addRadioClick = () => {
     setAddRadio((prevAddRadio) => [
@@ -80,6 +83,10 @@ export const Radios = ({
     setAddRadio((prev) =>
       prev.map((item, i) => (i === index ? { ...item, value } : item)),
     );
+  };
+
+  const handleDataRadioChange = (selectedValue: string) => {
+    onRadioChange?.(selectedValue);
   };
 
   return (
@@ -104,6 +111,7 @@ export const Radios = ({
             userType={userType}
             radioLabel={data.label}
             name={name}
+            onRadioChange={handleDataRadioChange}
           />
         ))}
 

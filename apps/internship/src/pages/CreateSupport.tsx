@@ -2,20 +2,25 @@ import { CheckContents, Title, KeyWord } from "../components";
 import { Inputs, Label, Button, InputTextArea, SubBtn } from "@entry/ui";
 import { useRef, useState, React, useEffect } from "react";
 import styled from "@emotion/styled";
-import { useNavigate } from "react-router-dom";
+import { apiCreateSupport } from "../apis";
+import { randomUUID } from "crypto";
+import { useMutation } from "@tanstack/react-query";
 
 export const CreateSupport = () => {
   const fileRef = useRef();
   const [keywordValue, setKeywordValue] = useState<string>("");
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [isImportant, setIsImportant] = useState<boolean>(false);
+  const noticeId = crypto.randomUUID();
   const [datas, setDatas] = useState<{
+    noticeId: string;
     title: string;
     keyword: string[];
     imgUrl: string;
     areaInput: { valueInput: string; valueArea: string }[];
     checkbox: { focused: boolean; important: boolean };
   }>({
+    noticeId: noticeId,
     title: "",
     keyword: [],
     imgUrl: "",
@@ -28,10 +33,23 @@ export const CreateSupport = () => {
     checkbox: { focused: isFocused, important: isImportant },
   });
 
-  const navigate = useNavigate();
+  const apiSubmit = apiCreateSupport();
 
   const completedClick = () => {
-    navigate("/completed");
+    apiSubmit.mutate({
+      noticeId: datas.noticeId,
+      title: datas.title,
+      keyWord: datas.keyword,
+      titleImageUrl: datas.imgUrl,
+      description: [
+        {
+          title: datas.areaInput.valueInput,
+          content: datas.areaInput.valueArea,
+        },
+      ],
+      isFocusRecruit: datas.checkbox.focused,
+      isImportant: datas.checkbox.important,
+    });
   };
 
   const imgBtnClick = () => {
@@ -118,7 +136,7 @@ export const CreateSupport = () => {
     }));
   }, [isFocused, isImportant]);
 
-  console.log(datas);
+  // console.log(datas);
 
   return (
     <CreateSupportContainer>
