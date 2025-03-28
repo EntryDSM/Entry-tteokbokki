@@ -1,8 +1,7 @@
 import styled from "@emotion/styled";
 import { color } from "@entry/design-token";
-import github from "../../assets/login/github.svg";
+import { githubIcon, googleIcon } from "../../assets/login";
 import Modal from "react-modal";
-import { apiGithubLogin } from "../../apis";
 
 Modal.setAppElement("#root");
 Modal.defaultStyles.overlay = {};
@@ -14,17 +13,22 @@ type ModalProps = {
 };
 
 export const LoginModal = ({ isOpen, onClose }: ModalProps) => {
-  const gitLogin = apiGithubLogin();
-
-  const loginClick = async () => { 
-    gitLogin.mutate();
-  };
   return (
     <Modal style={ModalStyle} isOpen={isOpen} onRequestClose={onClose}>
       <TitleContainer>로그인</TitleContainer>
-      <GithubButton onClick={loginClick}>
-        <img src={github} />
-        github로 로그인하기
+
+      {/* 구글 로그인 버튼 */}
+      <GoogleButtonWrapper>
+        <GoogleButtonDisplay>
+          <img src={googleIcon} />
+          Google로 로그인하기
+        </GoogleButtonDisplay>
+      </GoogleButtonWrapper>
+
+      {/* GitHub 로그인 버튼 */}
+      <GithubButton>
+        <img src={githubIcon} />
+        Github로 로그인하기
       </GithubButton>
     </Modal>
   );
@@ -54,19 +58,45 @@ const ModalStyle: ReactModal.Styles = {
     position: "absolute",
     width: "35%",
     minWidth: "380px",
-    height: "270px",
+    height: "350px",
     opacity: "1",
     zIndex: "9999",
     backgroundColor: "#ffffff",
     border: "none",
     borderRadius: "10px",
     outline: "none",
-
     display: "flex",
     flexDirection: "column",
     padding: "30px 90px",
   },
 };
+
+const GoogleButtonWrapper = styled.div`
+  width: 100%;
+  height: 55px;
+  position: relative;
+  border-radius: 10px;
+  margin-top: 30px;
+  cursor: pointer;
+`;
+
+const GoogleButtonDisplay = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  font-weight: 600;
+  color: ${color.extra.black};
+  background-color: white;
+  border: 1px solid #d1d1d1;
+  border-radius: 10px;
+
+  img {
+    margin-right: 10px;
+  }
+`;
 
 const GithubButton = styled.div`
   width: 100%;
@@ -81,8 +111,9 @@ const GithubButton = styled.div`
   background-color: #1b1f23;
   margin-top: 30px;
   text-align: center;
+  cursor: pointer;
 
-  &:hover {
-    cursor: pointer;
+  img {
+    margin-right: 10px;
   }
 `;
