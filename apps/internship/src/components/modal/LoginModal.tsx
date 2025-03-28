@@ -2,7 +2,6 @@ import styled from "@emotion/styled";
 import { color } from "@entry/design-token";
 import { githubIcon, googleIcon } from "../../assets/login";
 import Modal from "react-modal";
-import { githubLogin } from "../../apis/githubAuth";
 
 Modal.setAppElement("#root");
 Modal.defaultStyles.overlay = {};
@@ -14,15 +13,6 @@ type ModalProps = {
 };
 
 export const LoginModal = ({ isOpen, onClose }: ModalProps) => {
-  const handleGithubLogin = async () => {
-    try {
-      const loginUrl: string = await githubLogin();
-      window.location.href = loginUrl;
-    } catch (error) {
-      console.error("github 로그인 오류 : ", error);
-    }
-  };
-
   return (
     <Modal style={ModalStyle} isOpen={isOpen} onRequestClose={onClose}>
       <TitleContainer>로그인</TitleContainer>
@@ -36,7 +26,7 @@ export const LoginModal = ({ isOpen, onClose }: ModalProps) => {
       </GoogleButtonWrapper>
 
       {/* GitHub 로그인 버튼 */}
-      <GithubButton onClick={handleGithubLogin}>
+      <GithubButton>
         <img src={githubIcon} />
         Github로 로그인하기
       </GithubButton>
